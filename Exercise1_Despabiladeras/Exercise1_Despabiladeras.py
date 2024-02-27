@@ -1,10 +1,9 @@
 """
-hello world
+hello world it's me mario
 """ 
 
 dms = 118.42069
 deg = int(dms)
-print(round(deg,6))
 print("Degrees to be converted to DMS: ", dms)
 
 
