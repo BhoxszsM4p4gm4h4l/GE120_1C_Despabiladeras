@@ -22,6 +22,21 @@ while True:
     if "-" in str(azi):
         degrees,minutes, seconds = azi.split("-")
         azi = (int(degrees)+(int(minutes)/60)+(float(seconds)/3600))
+        dms = 118.42069
+        deg = int(dms)
+        print("Degrees to be converted to DMS: ", dms)
+
+
+        #for minutes we need to...
+        mins=(dms - deg)*60
+        mins_frac = int(mins)
+
+        #for seconds we get...
+        sec = (mins - mins_frac)*60
+        rsec = round(sec,2)
+        dems = [deg,mins_frac,rsec]
+        print("The resulting DMS is " + str(deg) + "-" + str(mins_frac)+"-"+ str(rsec))
+        #were now done for deg to dms!
     else: 
         azi = float(azi%360)
     if azi > 0 and azi <90:

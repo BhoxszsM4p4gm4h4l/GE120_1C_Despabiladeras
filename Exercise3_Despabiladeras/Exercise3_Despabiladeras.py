@@ -1,10 +1,15 @@
 """
 
-hi its me yole
+hello am yole!
+GE120: Intro To Geomatic Application
+Mariole B. Despabiladeras
+2023-11218
+
+Exercise 2
 
 """
 
-from math import cos, sin, radians 
+from math import cos, sin, radians, sqrt 
 
 def getLatitude(distance,azimuth):
     '''
@@ -25,31 +30,22 @@ def getDeparture(distance, azimuth):
     dep = -distance * sin(radians(azimuth))
 
     return dep
-latitude = getLatitude(12,45)
-print(latitude)
-departure = getDeparture(12,135)
-print(departure)
 
-#now for azimuth to bearing
-
-def azimuthToBearing (azimuth):
-    '''
-    int
-    azimuth - float
-
-    out 
-    bearing - string
-    '''
-    if  
+def azimuthtobearing (azimuth):
+    if "-" in str(azimuth):
+        degrees, minutes, seconds = azimuth.split("-")
+        azimuth = (int(degrees))+(int(minutes/60))+(float(seconds/3600))%3600
+    else:
+        azimuth = float(azimuth)%360
     
-    if azimuth > 0 and azimuth <90:
-        bearing = 'S {: ^10} W'.format(azimuth)
+    if azimuth > 0 and azimuth < 90:
+        bearing = "s {:^5}  W".format(azimuth)
     elif azimuth > 90 and azimuth < 180:
-        bearing = 'S {: ^10} W'.format(180 - azimuth)
+        bearing = "N {:^5} W".format(180-azimuth)
     elif azimuth > 180 and azimuth < 270:
-        bearing = 'S {: ^10} W'.format(azimuth - 180)
+        bearing = "S {:^5} E".format(azimuth-180)
     elif azimuth > 270 and azimuth < 360:
-        bearing = 'S {: ^10} W'.format(360 - azimuth)
+        bearing = "N {:^5} E".format(360-azimuth)
     elif azimuth == 0:
         bearing = "DUE SOUTH"
     elif azimuth == 90:
@@ -59,20 +55,41 @@ def azimuthToBearing (azimuth):
     elif azimuth == 270:
         bearing = "DUE EAST"
     else:
-        bearing = "alaws"
-return bearing 
-    line = (counter, distance, azimuth)
-    Lines.append(line)
+        bearing = "alaws" 
+    
+    return bearing
 
-"""
-how to get summation of lat and dep 
-make a variable na 
-sumLat  =+  lat ng line 
-sumdep = sumdep + dep 
+counter = 1
+lines = []
+sumLat = 0
+sumDep = 0
+sumDist = 0
 
-to geth teh running total of all the thinsg
+while True:
+    print()
+    print("LINE NO: ", counter)
 
-gawa din ng summation ni distance
+    bobstyping = False
+    while not(bobstyping):
+        distance = input("Distance: ")
+        if bobstyping:
+            print("bobo")
+            continue
+        if not(bobstyping):
+            break
+    azimuth = input("Azimuth from the South: ")
 
+    bearing = azimuthtobearing(azimuth)
+    lat = getLatitude(azimuth=float(azimuth),distance=float(distance))
+    dep = getDeparture(azimuth=float(azimuth),distance=float(distance)) 
 
-"""
+    sumLat = sumLat+lat
+    sumDep = sumDep+dep
+    sumDist = float(distance)
+
+    yn = input("add new line? ")
+    if yn.lower == "yes" or yn == "Yes" or yn.upper == "yes" or yn == "y":
+        counter = counter +1
+        continue
+    else:    
+        break
