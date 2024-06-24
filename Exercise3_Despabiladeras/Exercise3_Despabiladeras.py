@@ -17,13 +17,16 @@ o Return: departure
 o Parameters: azimuth from the south 
 o Return: bearing 
 """
+from math import cos, sin, radians, sqrt
 
-from math import cos, sin, radians, sqrt 
-
+# Initialize variables
 linecount = 1
 Lines = []
+sumLat = 0
+sumDep = 0
+sumDist = 0
 
-def getLatitude(distance,azimuth):
+def getLatitude(distance, azimuth):
     '''
     input:
     distance
@@ -32,32 +35,24 @@ def getLatitude(distance,azimuth):
     output:
     lat
     dep
-
     '''
     latitude = -distance * cos(radians(azimuth))
-
     return latitude
 
 def getDeparture(distance, azimuth):
     departure = -distance * sin(radians(azimuth))
-
     return departure
 
-def azimuthToBearing (azimuth):
-    if "-" in str(azimuth):
-        degrees, minutes, seconds = azimuth.split("-")
-        azimuth = (int(degrees))+(int(minutes/60))+(float(seconds/3600))%3600
-    else:
-        azimuth = float(azimuth)%360
-    
+def azimuthToBearing(azimuth):
+    azimuth = float(azimuth) % 360
     if azimuth > 0 and azimuth < 90:
-        bearing = "s {:^5}  W".format(azimuth)
+        bearing = "S {:^5.2f} W".format(azimuth)
     elif azimuth > 90 and azimuth < 180:
-        bearing = "N {:^5} W".format(180-azimuth)
+        bearing = "N {:^5.2f} W".format(180 - azimuth)
     elif azimuth > 180 and azimuth < 270:
-        bearing = "S {:^5} E".format(azimuth-180)
+        bearing = "S {:^5.2f} E".format(azimuth - 180)
     elif azimuth > 270 and azimuth < 360:
-        bearing = "N {:^5} E".format(360-azimuth)
+        bearing = "N {:^5.2f} E".format(360 - azimuth)
     elif azimuth == 0:
         bearing = "DUE SOUTH"
     elif azimuth == 90:
@@ -67,55 +62,62 @@ def azimuthToBearing (azimuth):
     elif azimuth == 270:
         bearing = "DUE EAST"
     else:
-        bearing = "alaws" 
+        bearing = "UNKNOWN"
     
     return bearing
 
-linecount = 1
-lines = []
-
-sumLat = 0
-sumDep = 0
-sumDist = 0
-
 while True:
-    print()
-    print("LINE NO: ", linecount)
+    print("\nLINE NO: ", linecount)
 
-    bobstyping = False
-    while not(bobstyping):
-        distance = input("Distance: ")
-        if bobstyping:
-            print("bobo")
-            continue
-        if not(bobstyping):
-            break
+    # Input distance
+    distance = input("Distance: ")
+    try:
+        distance = float(distance)
+    except ValueError:
+        print("Please enter a valid number for distance.")
+        continue
+
+    # Input azimuth
     azimuth = input("Azimuth from the South: ")
+    try:
+        azimuth = float(azimuth)
+    except ValueError:
+        print("Please enter a valid number for azimuth.")
+        continue
 
     bearing = azimuthToBearing(azimuth)
-    lat = getLatitude(azimuth=float(azimuth),distance=float(distance))
-    dep = getDeparture(azimuth=float(azimuth),distance=float(distance)) 
+    lat = getLatitude(distance, azimuth)
+    dep = getDeparture(distance, azimuth) 
 
-    sumLat = sumLat+lat
-    sumDep = sumDep+dep
-    sumDist = float(distance)
+    sumLat += lat
+    sumDep += dep
+    sumDist += distance
 
-
-    line = [linecount, distance, bearing, latitude(), departure()]
+    line = [linecount, distance, bearing, lat, dep]
     Lines.append(line)
 
-    if yn.lower == "yes" or yn == "Yes" or yn == "y" or yn.upper == "y":
-        linecount = linecount + 1
+    yn = input("Do you want to continue? (yes/y to continue): ").strip().lower()
+    if yn in ("yes", "y"):
+        linecount += 1
         continue
     else:
         break
 
-
-print("{: ^20}".format("\n\nLINES SIGHTED"))
+print("{:^20}".format("\n\nLINES SIGHTED"))
 print()
-print("{: ^20}{: ^20}{: ^20}{: ^20}{: ^20}".format("LINE NO.","DISTANCE","BEARING","LATITUDE","DEPARTURE"))
-
+print("{:^10}{:^15}{:^20}{:^15}{:^15}".format("LINE NO.", "DISTANCE", "BEARING", "LATITUDE", "DEPARTURE"))
 for line in Lines:
-    print("{: ^20}{: ^20}{: ^20}".format(line[0],line[1],line[2],line[3],[4]))
-print("{:^40}".format("\n----END----"))
+    print("{:^10}{:^15.2f}{:^20}{:^15.2f}{:^15.2f}".format(line[0], line[1], line[2], line[3], line[4]))
 
+
+print("SUMMATION OF LAT:", sumLat)
+print("SUMMATION OF DEP:", sumDep)
+print("SUMMATION OF DISTANCE:", sumDist)
+
+lec = sqrt(sumLat**2 + sumDep**2)
+
+print("LEC: ", lec)
+rec = sumDist/lec
+print("1: ", round(rec,3))
+
+print("{:^40}".format("\n----END----"))

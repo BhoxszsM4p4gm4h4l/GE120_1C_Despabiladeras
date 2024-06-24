@@ -24,8 +24,8 @@ from math import cos, sin, radians, sqrt
 class Line:
 
     def __init__(self, distance, azimuth):
-        self.distance = distance
-        self.azimuth = azimuth 
+        self.distance = float(distance)
+        self.azimuth = float(azimuth) % 360
 
     def latitude(self):
         '''
@@ -38,12 +38,12 @@ class Line:
         dep
 
         '''
-        latitude = -float(self.distance)* cos(radians(self.azimuth))
+        latitude = -self.distance* cos(radians(self.azimuth))
 
         return latitude
 
     def departure(self):
-        departure = -float(self.distance)* sin(radians(self.azimuth))
+        departure = -self.distance* sin(radians(self.azimuth))
 
         return departure
 
@@ -123,7 +123,7 @@ while True:
     sumDep += line.departure()
     sumDist += float(azimuth)%360
 
-    Lines.append((linecount, line.distance, line.bearing(),line.latitude(),line.departure()))
+    Lines.append((linecount, line.distance, line.bearing(),line.latitude(),line.departure())) 
 
     yn =  input("Add new linw? (Y/N)")
     if yn.lower == "yes" or yn == "Yes" or yn == "y" or yn.upper == "y":
@@ -138,7 +138,7 @@ print()
 print("{: ^20}{: ^20}{: ^20}{: ^20}{: ^20}".format("LINE NO.","DISTANCE","BEARING","LATITUDE","DEPARTURE"))
 
 for line in Lines:
-    print("{: ^20}{: ^20}{: ^20}".format(line[0],line[1],line[2],line[3],[4]))
+    print("{: ^20}{: ^20}{: ^20}".format(line[0],line[1],line[2],line[3],line[4]))
 
 print('SUMMATION OF LAT: {}'.format(sumLat))
 print('SUMMATION OF DEP: {}'.format(sumDep))
