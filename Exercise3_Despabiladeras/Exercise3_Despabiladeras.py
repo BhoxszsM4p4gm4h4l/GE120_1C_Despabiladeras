@@ -7,9 +7,21 @@ Mariole B. Despabiladeras
 
 Exercise 2
 
+Computes the latitude of a given line based on its distance and azimuth from the South. o Function Name: getLatitude 
+o Parameters: distance, azimuth from the south 
+o Return: latitude 
+• Computes the departure of a given line based on its distance and azimuth from the South. o Function Name: getDeparture 
+o Parameters: distance, azimuth from the south 
+o Return: departure 
+• Converts an azimuth (decimal degrees) to bearing (string) with signs (N,S,E,W) o Function Name: azimuthToBearing 
+o Parameters: azimuth from the south 
+o Return: bearing 
 """
 
 from math import cos, sin, radians, sqrt 
+
+linecount = 1
+Lines = []
 
 def getLatitude(distance,azimuth):
     '''
@@ -22,16 +34,16 @@ def getLatitude(distance,azimuth):
     dep
 
     '''
-    lat = -distance * cos(radians(azimuth))
+    latitude = -distance * cos(radians(azimuth))
 
-    return lat
+    return latitude
 
 def getDeparture(distance, azimuth):
-    dep = -distance * sin(radians(azimuth))
+    departure = -distance * sin(radians(azimuth))
 
-    return dep
+    return departure
 
-def azimuthtobearing (azimuth):
+def azimuthToBearing (azimuth):
     if "-" in str(azimuth):
         degrees, minutes, seconds = azimuth.split("-")
         azimuth = (int(degrees))+(int(minutes/60))+(float(seconds/3600))%3600
@@ -59,15 +71,16 @@ def azimuthtobearing (azimuth):
     
     return bearing
 
-counter = 1
+linecount = 1
 lines = []
+
 sumLat = 0
 sumDep = 0
 sumDist = 0
 
 while True:
     print()
-    print("LINE NO: ", counter)
+    print("LINE NO: ", linecount)
 
     bobstyping = False
     while not(bobstyping):
@@ -79,7 +92,7 @@ while True:
             break
     azimuth = input("Azimuth from the South: ")
 
-    bearing = azimuthtobearing(azimuth)
+    bearing = azimuthToBearing(azimuth)
     lat = getLatitude(azimuth=float(azimuth),distance=float(distance))
     dep = getDeparture(azimuth=float(azimuth),distance=float(distance)) 
 
@@ -87,9 +100,22 @@ while True:
     sumDep = sumDep+dep
     sumDist = float(distance)
 
-    yn = input("add new line? ")
-    if yn.lower == "yes" or yn == "Yes" or yn.upper == "yes" or yn == "y":
-        counter = counter +1
+
+    line = [linecount, distance, bearing, latitude(), departure()]
+    Lines.append(line)
+
+    if yn.lower == "yes" or yn == "Yes" or yn == "y" or yn.upper == "y":
+        linecount = linecount + 1
         continue
-    else:    
+    else:
         break
+
+
+print("{: ^20}".format("\n\nLINES SIGHTED"))
+print()
+print("{: ^20}{: ^20}{: ^20}{: ^20}{: ^20}".format("LINE NO.","DISTANCE","BEARING","LATITUDE","DEPARTURE"))
+
+for line in Lines:
+    print("{: ^20}{: ^20}{: ^20}".format(line[0],line[1],line[2],line[3],[4]))
+print("{:^40}".format("\n----END----"))
+

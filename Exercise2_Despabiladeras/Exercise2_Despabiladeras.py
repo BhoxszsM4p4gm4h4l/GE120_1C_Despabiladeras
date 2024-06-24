@@ -1,76 +1,81 @@
-"""
-
-hello am yole!
-GE120: Intro To Geomatic Application
-Mariole B. Despabiladeras
-2023-11218
-
-Exercise 2
-
-"""
-counter=1
-
+linecount = 1
 Lines = []
 
 while True:
-    print()
-    print("Line #", counter)
     
-    distance = input("Distance: ")
-    azi = (input("Azimuth from the South: "))
+    print()
+    print("Line #", linecount)
 
-    if "-" in str(azi):
-        degrees,minutes, seconds = azi.split("-")
-        azi = (int(degrees)+(int(minutes)/60)+(float(seconds)/3600))
-        dms = 118.42069
-        deg = int(dms)
-        print("Degrees to be converted to DMS: ", dms)
+    distance = input("Distance:")
+    azimuth = float(input("Azimuth from South:"))
+    yn = input("Add a new line (Y/N)? ")
 
+    if "-" in str(azimuth):
+        degrees, minutes, seconds = azimuth.split("-")
+        azimuth = (int(degrees))+(int(minutes/60))+(float(seconds/3600))%3600
+    else:
+        azimuth = float(azimuth)%360
+ 
+    deg=int(azimuth)
+    min=(azimuth-deg)*60
+    sec=(min-int(min))*60
+    degminsec = [deg,int(min),round(sec,2)]
+    dms = '-'.join(map(str, degminsec))
 
-        #for minutes we need to...
-        mins=(dms - deg)*60
-        mins_frac = int(mins)
-
-        #for seconds we get...
-        sec = (mins - mins_frac)*60
-        rsec = round(sec,2)
-        dems = [deg,mins_frac,rsec]
-        print("The resulting DMS is " + str(deg) + "-" + str(mins_frac)+"-"+ str(rsec))
-        #were now done for deg to dms!
-    else: 
-        azi = float(azi%360)
-    if azi > 0 and azi <90:
-        bearing = 'S {: ^10} W'.format(azi)
-    elif azi > 90 and azi < 180:
-        bearing = 'N {: ^10} W'.format(180 - azi)
-    elif azi > 180 and azi < 270:
-        bearing = 'N {: ^10} E'.format(azi - 180)
-    elif azi > 270 and azi < 360:
-        bearing = 'N {: ^10} E'.format(360 - azi)
-    elif azi == 0:
-        bearing = "DUE SOUTH"
-    elif azi == 90:
-        bearing = "DUE WEST"
-    elif azi == 180:
+    if deg > 0 and deg < 90 and int(min)>=0 and sec>0:
+        bearing ="N {} E".format(dms)
+    elif deg > 90 and deg < 180 and int(min)>=0 and sec>=0:
+        bearing = "N {} W".format(dms)
+    elif deg > 180 and deg < 270 and int(min)>=0 and sec>=0:
+        bearing = "S {} W".format(dms)
+    elif deg > 270 and deg < 360 and int(min)>=0 and sec>=0:
+        bearing = "S {} E".format(dms)
+    elif deg == 90 and int(min) == 0 and sec == 0:
         bearing = "DUE NORTH"
-    elif azi == 270:
+    elif deg == 180 and int(min) == 0 and sec == 0:
+        bearing = "DUE WEST"
+    elif deg == 270 and int(min) == 0 and sec == 0:
+        bearing = "DUE SOUTH"
+    elif deg == 0 and int(min) == 0 and sec == 0:
         bearing = "DUE EAST"
     else:
-        bearing = "alaws"      
+        print('error')
 
-    line = (counter, distance, bearing)
+    if azimuth > 0 and azimuth < 90:
+        bearing = "S {:^5}  W".format(azimuth)
+    elif azimuth > 90 and azimuth < 180:
+        bearing = "N {:^5} W".format(180-azimuth)
+    elif azimuth > 180 and azimuth < 270:
+        bearing = "S {:^5} E".format(azimuth-180)
+    elif azimuth > 270 and azimuth < 360:
+        bearing = "N {:^5} E".format(360-azimuth)
+    elif azimuth == 0:
+        bearing = "DUE SOUTH"
+    elif azimuth == 90:
+        bearing = "DUE WEST"
+    elif azimuth == 180:
+        bearing = "DUE NORTH"
+    elif azimuth == 270:
+        bearing = "DUE EAST"
+    else:
+        bearing = "error"
+
+
+    line = [linecount, distance, dms]
     Lines.append(line)
 
-    yn = input("add new line? ")
-    if yn.lower == "yes" or yn == "Yes" or yn.upper == "yes" or yn == "y":
-        counter = counter +1
+    if yn.lower == "yes" or yn == "Yes" or yn == "y" or yn.upper == "y":
+        linecount = linecount + 1
         continue
-    else:    
+    else:
         break
 
 
-print("\n\nLINES SIGHTED")
-print("{: ^20}{: ^20}{: ^20}".format("LINE NO.","DISTANCE","BEARING"))
+print("{:^20}".format("\n\nLINES SIGHTED"))
+print()  
+print("{:^20}{:^20}{:^20}".format("LINE NO.", "DISTANCE", "BEARING"))
 for line in Lines:
-    print("{: ^20}{: ^20}{: ^20}".format(line[0],line[1],line[2]))
+    print('{: ^20} {: ^20} {: ^20}'.format(line[0], line[1], line[2]))
 print("{:^40}".format("\n----END----"))
+
+    
