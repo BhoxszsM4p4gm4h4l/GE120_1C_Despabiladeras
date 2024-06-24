@@ -1,109 +1,59 @@
+function getLatitude(distance, azimuth){
+    if (azimuth % 180 ) {return 0 } else {
+    return (-distance * Math.sin(azimuth*Math.PI/100.0))}
 
-linecount = 1
-Lines = []
-
-function getLatitude(distance, azimuth) {
-    // Convert degrees to radians
-function radians(degrees) {
-    return degrees * (Math.PI / 180);
     }
-if (azimuth % 180 == 90) (return 0) else {
+function getDeparture(distance, azimuth){
+    if (azimuth % 180 == 0) {return 0} else {
+    return (-distance * Math.sin(azimuth* Math.PI/180.0))}
+    }
+
+function azimuthToBearing(azimuth){
 
 }
-    // Calculate departure
-let departure = -distance * Math.cos(radians(azimuth));
-    return departure;
-}
-function getDeparture(distance, azimuth) {
-        // Convert degrees to radians
-    function radians(degrees) {
-        return degrees * (Math.PI / 180);
-        }
-    
-        // Calculate departure
-    let departure = -distance * Math.sin(radians(azimuth));
-        return departure;
-    }
 
-function azimuthToBearing(azimuth) {
-    if (typeof azimuth === 'string' && azimuth.includes('-')) {
-        let [degrees, minutes, seconds] = azimuth.split('-').map(Number);
-        azimuth = (parseInt(degrees)) + (parseInt(minutes) / 60) + (parseFloat(seconds) / 3600);
-        azimuth %= 360;
-    } else {
-        azimuth = parseFloat(azimuth) % 360;
-    }
+var data = [
+    [13.23, 124.795],
+    [15.57, 14.143],
+    [43.36, 270.000],
+    [23.09, 188.169],
+    [10.99, 180.000],
+    [41.40, 50.562]
+]
 
-    let bearing;
+var lines = []
+var sumLat = 0
+var sumDep = 0 
+var sumDist = 0 
 
-    if (azimuth > 0 && azimuth < 90) {
-        bearing = `S ${azimuth.toFixed(2)} W`;
-    } else if (azimuth > 90 && azimuth < 180) {
-        bearing = `N ${(180 - azimuth).toFixed(2)} W`;
-    } else if (azimuth > 180 && azimuth < 270) {
-        bearing = `S ${(azimuth - 180).toFixed(2)} E`;
-    } else if (azimuth > 270 && azimuth < 360) {
-        bearing = `N ${(360 - azimuth).toFixed(2)} E`;
-    } else if (azimuth === 0) {
-        bearing = "DUE SOUTH";
-    } else if (azimuth === 90) {
-        bearing = "DUE WEST";
-    } else if (azimuth === 180) {
-        bearing = "DUE NORTH";
-    } else if (azimuth === 270) {
-        bearing = "DUE EAST";
-    } else {
-        bearing = "UNKNOWN";
-    }
+for (var i = 0; i < data.length; i++){
+    let line = data[1]
+    let distance = line [0]
+    let azimuth = line [1]
 
-    return bearing;
+    let bearing = azimuthToBearing(azimuth)
+    let lat = getLatitude(distance, azimuth)
+    let dep = getDeparture(distance, azimuth)
+
+    sumLat += lat
+    sumDep += dep
+    sumDist += distance
+
+    lines.push([(i+1), distance, bearing, lat, dep])
 }
 
-linecount = 1
-lines = []
+console.log("LINE NO.".padEnd(10), "DISTANCE".padEnd(10), "BEARING".padEnd(15), "LATITUDE".padEnd(10), "DEPARTURE".padEnd(10))
+for(var line of lines){
+    console.log(
+        line[0].toString().padEnd(10),
+        line[1].toString().padEnd(10),
+        line[2].padEnd(15),
+        line[3].toPrecision(5).toString().padEnd(10),
+        line[4].toPrecision(5).toString().padEnd(10),
+        )
+}
+console.log("SUMMATION OF LAT:", sumLat.toPrecision(5))
+console.log("SUMMATION OF DEP:", sumDep.toPrecision(5))
+console.log("SUMMATION OF DIST:", sumDist.toPrecision(5))
 
-sumLat = 0
-sumDep = 0
-sumDist = 0
-
-while True:
-    print()
-    print("LINE NO: ", linecount)
-
-    bobstyping = False
-    while not(bobstyping):
-        distance = input("Distance: ")
-        if bobstyping:
-            print("bobo")
-            continue
-        if not(bobstyping):
-            break
-    azimuth = input("Azimuth from the South: ")
-
-    bearing = azimuthToBearing(azimuth)
-    lat = getLatitude(azimuth=float(azimuth),distance=float(distance))
-    dep = getDeparture(azimuth=float(azimuth),distance=float(distance)) 
-
-    sumLat = sumLat+lat
-    sumDep = sumDep+dep
-    sumDist = float(distance)
-
-
-    line = [linecount, distance, bearing, latitude(), departure()]
-    Lines.append(line)
-
-    if yn.lower == "yes" or yn == "Yes" or yn == "y" or yn.upper == "y":
-        linecount = linecount + 1
-        continue
-    else:
-        break
-
-
-print("{: ^20}".format("\n\nLINES SIGHTED"))
-print()
-print("{: ^20}{: ^20}{: ^20}{: ^20}{: ^20}".format("LINE NO.","DISTANCE","BEARING","LATITUDE","DEPARTURE"))
-
-for line in Lines:
-    print("{: ^20}{: ^20}{: ^20}".format(line[0],line[1],line[2],line[3],[4]))
-print("{:^40}".format("\n----END----"))
-
+lec = Math.sqrt(sumLat**2 + sumDep**2)
